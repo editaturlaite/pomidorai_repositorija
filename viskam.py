@@ -15,17 +15,17 @@ test_df = tf.keras.utils.image_dataset_from_directory(test_kelias,image_size=(22
 
 # ---------------------------------------------------------
 
-class_names = train_df.class_names
-print(class_names)
+# class_names = train_df.class_names
+# print(class_names)
 
-for images, labels in train_df.take(1):
-    plt.figure(figsize=(10, 10))
-    for i in range(9):
-        ax = plt.subplot(3, 3, i + 1)
-        plt.imshow(images[i].numpy().astype("uint8"))
-        plt.title(class_names[labels[i]])
-        plt.axis("off")
-        # plt.show()
+# for images, labels in train_df.take(1):
+#     plt.figure(figsize=(10, 10))
+#     for i in range(9):
+#         ax = plt.subplot(3, 3, i + 1)
+#         plt.imshow(images[i].numpy().astype("uint8"))
+#         plt.title(class_names[labels[i]])
+#         plt.axis("off")
+#         # plt.show()
 
 # ----------------------------------------------------------------
 
