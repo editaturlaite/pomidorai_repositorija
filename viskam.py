@@ -136,11 +136,11 @@ sesija = Session()
 
 # ----------------------------------------------------------------------
 
-# train_df = pd.read_sql_table('Pomidoru_lapai_trenyravimo_duomenys', con=rysys_su_baze)
+train_df = pd.read_sql_table('Pomidoru_lapai_trenyravimo_duomenys', con=rysys_su_baze)
 
-# val_df = pd.read_sql_table('Pomidoru_lapai_validacijos_duomenys', con=rysys_su_baze)
+val_df = pd.read_sql_table('Pomidoru_lapai_validacijos_duomenys', con=rysys_su_baze)
 
-# test_df = pd.read_sql_table('Pomidoru_lapai_testo_duomenys', con=rysys_su_baze)
+test_df = pd.read_sql_table('Pomidoru_lapai_testo_duomenys', con=rysys_su_baze)
 
 
 # print(train_df.head())
@@ -173,12 +173,14 @@ def uzkoduoti_klases_lable(y_train, y_val, y_test):
     y_val_skaiciais = enkoderis.transform(y_val)
     y_test_skaiciais = enkoderis.transform(y_test)
 
+    print("Klases uzkoduotos")
+
     return y_train_skaiciais,y_val_skaiciais,y_test_skaiciais
 
 y_train, y_val, y_test = uzkoduoti_klases_lable(y_train,y_val,y_test)
 
 # ------------------------------------------------------------------------------------------------------
-
+print("Pirmi y_train_encoded įrašai:", y_train[:10])
 
 
 
