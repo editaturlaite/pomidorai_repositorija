@@ -3,6 +3,11 @@ import matplotlib.pyplot as plt
 import tensorflow as tf
 from tensorflow import keras
 from tensorflow.keras import layers
+import pandas as pd
+import numpy as np
+from tensorflow.keras.utils import load_img, img_to_array
+from sklearn.preprocessing import LabelEncoder
+from sqlalchemy import create_engine
 
 
 train_kelias = r"C:\Users\Vartotojas\Desktop\POMIDORAI\pomidoru_duomenys\trenyravimas"
@@ -28,112 +33,140 @@ rysys_su_baze = create_engine('sqlite:///pomidoru_lapai.db')
 Session = sessionmaker(bind=rysys_su_baze)
 sesija = Session()
 
-class PomidoraiTrenyravimas(Bazine_klase):
+# class PomidoraiTrenyravimas(Bazine_klase):
 
-    __tablename__ = 'Pomidoru_lapai_trenyravimo_duomenys'
+#     __tablename__ = 'Pomidoru_lapai_trenyravimo_duomenys'
 
-    id = Column(Integer,primary_key = True)
-    kelias = Column(String, unique=True, nullable=False)  
-    klases_pavadinimas = Column(String, nullable=False)
-
-
-def irasyti_trenyravimo_paveikslelius(sesija, trenyravimo_kelias):
-
-    for klases_pavadinimas in os.listdir(trenyravimo_kelias):
-        klases_kelias = os.path.join(trenyravimo_kelias,klases_pavadinimas)
-
-        if os.path.isdir(klases_kelias):
-            for paveikslelio_pavadinimas in os.listdir(klases_kelias):
-                paveikslelio_kelias = os.path.join(klases_kelias,paveikslelio_pavadinimas)
-
-                egzistuoja = sesija.query(PomidoraiTrenyravimas).filter_by(kelias=paveikslelio_kelias).first()
-
-                if not egzistuoja:
-
-                    naujas_irasas = PomidoraiTrenyravimas(kelias = paveikslelio_kelias, klases_pavadinimas = klases_pavadinimas)
-
-                    sesija.add(naujas_irasas)
-
-    sesija.commit()
-
-    print("Irasyti trenyravimo paveiksleiai")
-
-# --------------------------------------------------------------------------------------------------------------------------
+#     id = Column(Integer,primary_key = True)
+#     kelias = Column(String, unique=True, nullable=False)  
+#     klases_pavadinimas = Column(String, nullable=False)
 
 
-class PomidoraiValidacija(Bazine_klase):
+# def irasyti_trenyravimo_paveikslelius(sesija, trenyravimo_kelias):
 
-    __tablename__ = 'Pomidoru_lapai_validacijos_duomenys'
+#     for klases_pavadinimas in os.listdir(trenyravimo_kelias):
+#         klases_kelias = os.path.join(trenyravimo_kelias,klases_pavadinimas)
 
-    id = Column(Integer,primary_key = True)
-    kelias = Column(String, unique=True, nullable=False)  
-    klases_pavadinimas = Column(String, nullable=False)
+#         if os.path.isdir(klases_kelias):
+#             for paveikslelio_pavadinimas in os.listdir(klases_kelias):
+#                 paveikslelio_kelias = os.path.join(klases_kelias,paveikslelio_pavadinimas)
 
-def irasyti_validacijos_paveikslelius(sesija, validacijos_kelias):
+#                 egzistuoja = sesija.query(PomidoraiTrenyravimas).filter_by(kelias=paveikslelio_kelias).first()
 
-    for klases_pavadinimas in os.listdir(validacijos_kelias):
-        klases_kelias = os.path.join(validacijos_kelias,klases_pavadinimas)
+#                 if not egzistuoja:
 
-        if os.path.isdir(klases_kelias):
-            for paveikslelio_pavadinimas in os.listdir(klases_kelias):
-                paveikslelio_kelias = os.path.join(klases_kelias,paveikslelio_pavadinimas)
+#                     naujas_irasas = PomidoraiTrenyravimas(kelias = paveikslelio_kelias, klases_pavadinimas = klases_pavadinimas)
 
-                egzistuoja = sesija.query(PomidoraiValidacija).filter_by(kelias=paveikslelio_kelias).first()
+#                     sesija.add(naujas_irasas)
 
-                if not egzistuoja:
+#     sesija.commit()
 
-                    naujas_irasas = PomidoraiValidacija(kelias = paveikslelio_kelias, klases_pavadinimas = klases_pavadinimas)
+#     print("Irasyti trenyravimo paveiksleiai")
 
-                    sesija.add(naujas_irasas)
-
-    sesija.commit()
-
-    print("Irasyti validacijos paveiksleiai")
-
-# -------------------------------------------------------------------------------------------------------------
-
-class PomidoraiTestas(Bazine_klase):
-
-    __tablename__ = 'Pomidoru_lapai_testo_duomenys'
-
-    id = Column(Integer,primary_key = True)
-    kelias = Column(String, unique=True, nullable=False)  
-    klases_pavadinimas = Column(String, nullable=False)
-
-def irasyti_testo_paveikslelius(sesija, testo_kelias):
-
-    for klases_pavadinimas in os.listdir(test_kelias):
-        klases_kelias = os.path.join(test_kelias,klases_pavadinimas)
-
-        if os.path.isdir(klases_kelias):
-            for paveikslelio_pavadinimas in os.listdir(klases_kelias):
-                paveikslelio_kelias = os.path.join(klases_kelias,paveikslelio_pavadinimas)
-
-                egzistuoja = sesija.query(PomidoraiTestas).filter_by(kelias=paveikslelio_kelias).first()
-
-                if not egzistuoja:
-
-                    naujas_irasas = PomidoraiTestas(kelias = paveikslelio_kelias, klases_pavadinimas = klases_pavadinimas)
-
-                    sesija.add(naujas_irasas)
-
-    sesija.commit()
-
-    print("Irasyti testo paveiksleiai")
-
-# ------------------------------------------------------------------------------------------
-Bazine_klase.metadata.create_all(rysys_su_baze)
-
-irasyti_trenyravimo_paveikslelius(sesija,train_kelias)
-irasyti_validacijos_paveikslelius(sesija,val_kelias)
-irasyti_testo_paveikslelius(sesija,test_kelias)
+# # --------------------------------------------------------------------------------------------------------------------------
 
 
+# class PomidoraiValidacija(Bazine_klase):
 
+#     __tablename__ = 'Pomidoru_lapai_validacijos_duomenys'
 
+#     id = Column(Integer,primary_key = True)
+#     kelias = Column(String, unique=True, nullable=False)  
+#     klases_pavadinimas = Column(String, nullable=False)
+
+# def irasyti_validacijos_paveikslelius(sesija, validacijos_kelias):
+
+#     for klases_pavadinimas in os.listdir(validacijos_kelias):
+#         klases_kelias = os.path.join(validacijos_kelias,klases_pavadinimas)
+
+#         if os.path.isdir(klases_kelias):
+#             for paveikslelio_pavadinimas in os.listdir(klases_kelias):
+#                 paveikslelio_kelias = os.path.join(klases_kelias,paveikslelio_pavadinimas)
+
+#                 egzistuoja = sesija.query(PomidoraiValidacija).filter_by(kelias=paveikslelio_kelias).first()
+
+#                 if not egzistuoja:
+
+#                     naujas_irasas = PomidoraiValidacija(kelias = paveikslelio_kelias, klases_pavadinimas = klases_pavadinimas)
+
+#                     sesija.add(naujas_irasas)
+
+#     sesija.commit()
+
+#     print("Irasyti validacijos paveiksleiai")
+
+# # -------------------------------------------------------------------------------------------------------------
+
+# class PomidoraiTestas(Bazine_klase):
+
+#     __tablename__ = 'Pomidoru_lapai_testo_duomenys'
+
+#     id = Column(Integer,primary_key = True)
+#     kelias = Column(String, unique=True, nullable=False)  
+#     klases_pavadinimas = Column(String, nullable=False)
+
+# def irasyti_testo_paveikslelius(sesija, testo_kelias):
+
+#     for klases_pavadinimas in os.listdir(test_kelias):
+#         klases_kelias = os.path.join(test_kelias,klases_pavadinimas)
+
+#         if os.path.isdir(klases_kelias):
+#             for paveikslelio_pavadinimas in os.listdir(klases_kelias):
+#                 paveikslelio_kelias = os.path.join(klases_kelias,paveikslelio_pavadinimas)
+
+#                 egzistuoja = sesija.query(PomidoraiTestas).filter_by(kelias=paveikslelio_kelias).first()
+
+#                 if not egzistuoja:
+
+#                     naujas_irasas = PomidoraiTestas(kelias = paveikslelio_kelias, klases_pavadinimas = klases_pavadinimas)
+
+#                     sesija.add(naujas_irasas)
+
+#     sesija.commit()
+
+#     print("Irasyti testo paveiksleiai")
+
+# # ------------------------------------------------------------------------------------------
+# Bazine_klase.metadata.create_all(rysys_su_baze)
+
+# irasyti_trenyravimo_paveikslelius(sesija,train_kelias)
+# irasyti_validacijos_paveikslelius(sesija,val_kelias)
+# irasyti_testo_paveikslelius(sesija,test_kelias)
 
 # ----------------------------------------------------------------------
 
+train_df = pd.read_sql_table('Pomidoru_lapai_trenyravimo_duomenys', con=rysys_su_baze)
+
+val_df = pd.read_sql_table('Pomidoru_lapai_validacijos_duomenys', con=rysys_su_baze)
+
+test_df = pd.read_sql_table('Pomidoru_lapai_testo_duomenys', con=rysys_su_baze)
+
+
+# print(train_df.head())
+# print(val_df.head())
+# print(test_df.head())
+
+# ---------------------------------------------------------------------------------------------------
+
+def issitraukti_paveikslelius(df, dydis=(224, 224)):
+    paveiksleliai = []
+    klasifikacijos = []
+
+    for indeksas, eilute in df.iterrows():
+        paveikslelis = load_img(eilute['kelias'], target_size=dydis)
+        paveikslelis_array = img_to_array(paveikslelis)
+        paveiksleliai.append(paveikslelis_array)
+        klasifikacijos.append(eilute['klases_pavadinimas'])
+
+    return np.array(paveiksleliai), np.array(klasifikacijos)
+
+x_train, y_train = issitraukti_paveikslelius(train_df)
+x_val, y_val = issitraukti_paveikslelius(val_df)
+x_test, y_test = issitraukti_paveikslelius(test_df)
+
+
+
+# ------------------------------------------------------------------------------------------------
 # class_names = train_df.class_names
 # print(class_names)
 
