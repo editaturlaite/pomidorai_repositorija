@@ -8,6 +8,7 @@ import numpy as np
 from tensorflow.keras.utils import load_img, img_to_array
 from sklearn.preprocessing import LabelEncoder
 from sqlalchemy import create_engine
+from sklearn.preprocessing import LabelEncoder
 
 
 train_kelias = r"C:\Users\Vartotojas\Desktop\POMIDORAI\pomidoru_duomenys\trenyravimas"
@@ -135,11 +136,11 @@ sesija = Session()
 
 # ----------------------------------------------------------------------
 
-train_df = pd.read_sql_table('Pomidoru_lapai_trenyravimo_duomenys', con=rysys_su_baze)
+# train_df = pd.read_sql_table('Pomidoru_lapai_trenyravimo_duomenys', con=rysys_su_baze)
 
-val_df = pd.read_sql_table('Pomidoru_lapai_validacijos_duomenys', con=rysys_su_baze)
+# val_df = pd.read_sql_table('Pomidoru_lapai_validacijos_duomenys', con=rysys_su_baze)
 
-test_df = pd.read_sql_table('Pomidoru_lapai_testo_duomenys', con=rysys_su_baze)
+# test_df = pd.read_sql_table('Pomidoru_lapai_testo_duomenys', con=rysys_su_baze)
 
 
 # print(train_df.head())
@@ -164,9 +165,26 @@ x_train, y_train = issitraukti_paveikslelius(train_df)
 x_val, y_val = issitraukti_paveikslelius(val_df)
 x_test, y_test = issitraukti_paveikslelius(test_df)
 
-
-
 # ------------------------------------------------------------------------------------------------
+def uzkoduoti_klases_lable(y_train, y_val, y_test):
+
+    enkoderis = LabelEncoder()
+    y_train_skaiciais = enkoderis.fit_transform(y_train)
+    y_val_skaiciais = enkoderis.transform(y_val)
+    y_test_skaiciais = enkoderis.transform(y_test)
+
+    return y_train_skaiciais,y_val_skaiciais,y_test_skaiciais
+
+y_train, y_val, y_test = uzkoduoti_klases_lable(y_train,y_val,y_test)
+
+# ------------------------------------------------------------------------------------------------------
+
+
+
+
+
+
+
 # class_names = train_df.class_names
 # print(class_names)
 
