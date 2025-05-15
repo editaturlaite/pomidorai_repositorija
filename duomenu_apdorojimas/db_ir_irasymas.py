@@ -27,7 +27,7 @@ def sukurti_sesija():
     rysys_su_baze = create_engine('sqlite:///pomidoru_lapai.db')
     Session = sessionmaker(bind=rysys_su_baze)
     sesija = Session()
-    return Bazine_klase, rysys_su_baze, Session, sesija
+    return rysys_su_baze, Session, sesija
 
 
 # ----------------------------------------------------------------------------------------------------
@@ -99,10 +99,3 @@ def irasyti_testo_paveikslelius(sesija, testo_kelias):
 
 
 
-rysys_su_baze, Session, sesija = sukurti_sesija()
-
-Bazine_klase.metadata.create_all(rysys_su_baze)
-
-irasyti_trenyravimo_paveikslelius(sesija,train_kelias)
-irasyti_validacijos_paveikslelius(sesija,val_kelias)
-irasyti_testo_paveikslelius(sesija,test_kelias)
