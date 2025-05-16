@@ -175,6 +175,10 @@ cython_debug/
 
 *.h5
 *.pkl
-modeliai/
+
 pomidoru_lapai.db
-issaugoti_modeliai/
+# Ignoruoti išsaugotus modelius
+modeliai/*.h5
+issaugoti_modeliai/*
+__pycache__/
+*.pyc
