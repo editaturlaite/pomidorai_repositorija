@@ -17,6 +17,7 @@ from duomenu_apdorojimas.hog_pozymiai import istraukti_hog
 from modeliai.paprastas_cnn import sukurti_paprasta_cnn
 from modeliai.svc_modelis import uzkrauti_svc_modeli
 from modeliai import cnn_modelis_hsv
+import tensorflow as tf
 
 # ---------------------------------------------------------------------------------------------------------------------
 # paprastas CNN modelis
@@ -109,5 +110,40 @@ conf_matrix = confusion_matrix(y_tikros_klases, y_spejamos_klases)
 disp = ConfusionMatrixDisplay(confusion_matrix=conf_matrix)
 disp.plot(xticks_rotation=45)
 plt.title("HSV CNN Matrica")
+plt.tight_layout()
+plt.show()
+
+# ---------------------------------------------------------------------------------------------------
+# Mobile Net V2
+
+paveikslelio_dydis = (224, 224)
+batch_size = 32
+SEED = 42
+
+test_ds = tf.keras.utils.image_dataset_from_directory(
+    r"C:\Users\Vartotojas\Desktop\POMIDORAI\pomidoru_duomenys\testas",
+    image_size=paveikslelio_dydis,
+    label_mode="int",
+    batch_size=batch_size,
+    shuffle=False,
+    seed=SEED)
+
+
+modelis = load_model("issaugoti_modeliai/mobilenet_modelis.h5")
+
+
+y_tikros = np.concatenate([y for x, y in test_ds], axis=0)
+y_spejimai = modelis.predict(test_ds)
+y_spejamos = np.argmax(y_spejimai, axis=1)
+
+
+print("Tikslumas:", accuracy_score(y_tikros, y_spejamos))
+print(classification_report(y_tikros, y_spejamos))
+
+
+conf_matrix = confusion_matrix(y_tikros, y_spejamos)
+disp = ConfusionMatrixDisplay(confusion_matrix=conf_matrix)
+disp.plot(xticks_rotation=45, cmap='Blues')
+plt.title("MobileNetV2 Matrica")
 plt.tight_layout()
 plt.show()
