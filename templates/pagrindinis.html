@@ -85,7 +85,10 @@
     </div>
 
     <div class="container">
-      <h1>Įkelkite savo nuotrauka</h1>
+            <a href="/ikelti_mokymui">
+        <button>Įkelti nuotrauką mokymui</button>
+    </a>
+      <h1>Įkelkite savo nuotrauką ligos nustatymui</h1>
       <form method="POST" enctype="multipart/form-data">
         <label for="modelis">Pasirinkite modelį:</label>
         <select name="modelis" id="modelis">
@@ -100,6 +103,7 @@
         <br><br>
         <button type="submit">Tikrinti</button>
       </form>
+      
       {% if rezultatas %}
         <p>{{ rezultatas|safe }}</p>
         <img src="{{ paveikslelis }}" alt="Įkelta nuotrauka" class="result" width="200">

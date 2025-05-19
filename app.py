@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request,redirect, url_for, flash
 import os
 from werkzeug.utils import secure_filename
 from prognozavimas_vartotojui import ( prognozuoti_su_cnn,prognozuoti_su_svc,prognozuoti_su_mobilenet,prognozuoti_su_cnn_hsv,prognozuoti_su_atsiustu_modeliu)
@@ -10,6 +10,7 @@ from duomenu_apdorojimas.db_ir_irasymas import PatarimasPagalKlase
 
 
 app = Flask(__name__)
+app.secret_key = 'saugos_raktas'  # būtina flash žinutėms
 
 
 # # a[lankas] įkeliamiems failams
@@ -128,6 +129,28 @@ def index():
                 rezultatas = "Klaida apdorojant failą"
 
     return render_template('pagrindinis.html', rezultatas=rezultatas, paveikslelis=paveikslelio_kelias)
+
+@app.route('/ikelti_mokymui', methods=['GET', 'POST'])
+def ikelti_mokymui():
+    if request.method == 'POST':
+        try:
+            klase = request.form['klase']
+            failas = request.files['nuotrauka']
+
+            paveikslelio_pavadinimas = secure_filename(failas.filename)
+            klase_aplankas = os.path.join('static', 'ikelta_mokymui', klase)
+            os.makedirs(klase_aplankas, exist_ok=True)
+            paveikslelio_kelias = os.path.join(klase_aplankas, paveikslelio_pavadinimas)
+            failas.save(paveikslelio_kelias)
+
+            flash(f" Nuotrauka įkelta į klasę: {klase}", "success")
+            return redirect(url_for('ikelti_mokymui'))
+        
+        except Exception as klaida:
+            flash("Klaida įkeliant failą", "error")
+            return redirect(url_for('ikelti_mokymui'))
+
+    return render_template('ikelti_mokymui.html')
 
 
 if __name__ == '__main__':

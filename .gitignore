@@ -198,3 +198,5 @@ static/*.jpg
 static/*.jpeg
 static/*.gif
 static/*.webp
+
+static/ikelta_mokymui/*

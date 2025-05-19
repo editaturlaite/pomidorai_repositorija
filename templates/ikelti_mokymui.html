@@ -1,0 +1,97 @@
+<html lang="lt">
+<head>
+    <meta charset="UTF-8">
+    <title>Įkelti nuotrauką mokymui</title>
+    <style>
+        body {
+            background-color: #f0fff0;
+            font-family: Arial, sans-serif;
+            padding: 40px;
+            text-align: center;
+        }
+        form {
+            background: white;
+            padding: 30px;
+            border-radius: 20px;
+            display: inline-block;
+            box-shadow: 0 0 15px rgba(0,0,0,0.2);
+        }
+        select, input, button {
+            margin-top: 10px;
+            width: 250px;
+            padding: 10px;
+        }
+        button {
+            background-color: #2e7d32;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #256428;
+        }
+        .success {
+    background-color: #d0f5d8;
+    color: #2e7d32;
+    padding: 10px;
+    margin-bottom: 10px;
+    border-radius: 8px;
+}
+
+.error {
+    background-color: #ffd6d6;
+    color: #a30000;
+    padding: 10px;
+    margin-bottom: 10px;
+    border-radius: 8px;
+}
+
+.warning {
+    background-color: #fff5cc;
+    color: #8a6d3b;
+    padding: 10px;
+    margin-bottom: 10px;
+    border-radius: 8px;
+}
+    </style>
+
+
+</head>
+<body>
+    <h2>Įkelkite naują nuotrauką mokymui</h2>
+{% with messages = get_flashed_messages(with_categories=true) %}
+  {% if messages %}
+    <ul style="list-style: none; padding: 0;">
+      {% for category, message in messages %}
+        <li class="{{ category }}">{{ message }}</li>
+      {% endfor %}
+    </ul>
+  {% endif %}
+{% endwith %}
+
+    <form method="POST" enctype="multipart/form-data">
+
+        
+        <label for="klase">Pasirinkite klasę:</label><br>
+        <select name="klase" id="klase" required>
+            <option value="Tomato___Bacterial_spot">Bacterial spot</option>
+            <option value="Tomato___Late_blight">Late blight</option>
+            <option value="Tomato___Septoria_leaf_spot">Septoria leaf spot</option>
+            <option value="Tomato___Spider_mites">Spider mites</option>
+            <option value="Tomato___Tomato_Yellow_Leaf_Curl_Virus">Yellow Leaf Curl Virus</option>
+            <option value="Tomato___healthy">Healthy</option>
+        </select>
+        <br><br>
+
+        <input type="file" name="nuotrauka" accept="image/*" required>
+        <br><br>
+
+        <button type="submit">Įkelti mokymui</button>
+    </form>
+
+    <br><br>
+    <a href="/">Grįžti į pagrindinį puslapį</a>
+</body>
+</html>
+
