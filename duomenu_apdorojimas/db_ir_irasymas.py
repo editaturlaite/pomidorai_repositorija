@@ -24,7 +24,7 @@ class PomidoraiTestas(Bazine_klase):
 
 
 def sukurti_sesija():
-    rysys_su_baze = create_engine('sqlite:///pomidoru_lapai.db')
+    rysys_su_baze = create_engine('sqlite:///duomenu_baze/pomidoru_lapai.db')
     Session = sessionmaker(bind=rysys_su_baze)
     sesija = Session()
     return rysys_su_baze, Session, sesija

@@ -1,0 +1,23 @@
+<head>
+    <meta charset="UTF-8">
+    <title>Pomidorų ligų klasifikacija</title>
+</head>
+<body>
+    <h1>Įkelkite savo nuotrauka</h1>
+    <form method="POST" enctype="multipart/form-data">
+        <label for="modelis">Pasirinkite modelį:</label>
+        <select name="modelis" id="modelis">
+            <option value="cnn">CNN modelis</option>
+            <option value="svc">SVC modelis</option>
+        </select>
+        <br><br>
+        <input type="file" name="nuotrauka" accept="image/*" required>
+        <br><br>
+        <button type="submit">Tikrinti</button>
+    </form>
+    {% if rezultatas %}
+    <p>{{ rezultatas }}</p>
+    <img src="{{ paveikslelis }}" alt="Įkelta nuotrauka" width="200">
+    {% endif %}
+</body>
+</html>

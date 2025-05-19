@@ -13,7 +13,7 @@ x_train_hog = istraukti_hog(x_train)
 x_val_hog = istraukti_hog(x_val)
 x_test_hog = istraukti_hog(x_test)
 
-modelis = SVC(kernel='linear')
+modelis = SVC(kernel='rbf')
 modelis.fit(x_train_hog, y_train)
 
 y_val_spejimai = modelis.predict(x_val_hog)
@@ -27,12 +27,12 @@ print(classification_report(y_test, y_test_spejimai))
 
 conf_matrix = confusion_matrix(y_test, y_test_spejimai)
 disp = ConfusionMatrixDisplay(confusion_matrix=conf_matrix)
-disp.plot(xticks_rotation=45)
+disp.plot(xticks_rotation=45,cmap="Blues")
 plt.title("SVC Matrica")
 plt.tight_layout()
 plt.show()
 
 
-joblib.dump(modelis, r"C:\Users\Vartotojas\Desktop\POMIDORAI\pomidorai_repositorija\modeliai\svc_modelis_linear.pkl")
+joblib.dump(modelis, r"C:\Users\Vartotojas\Desktop\POMIDORAI\pomidorai_repositorija\issaugoti_modeliai\svc_modelis_rbf.pkl")
 
-joblib.dump(modelis, "svc_modelis_linear.pkl") #colab
+# joblib.dump(modelis, "svc_modelis_linear.pkl") #colab

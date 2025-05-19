@@ -177,8 +177,18 @@ cython_debug/
 *.pkl
 
 pomidoru_lapai.db
-# Ignoruoti išsaugotus modelius
-modeliai/*.h5
-issaugoti_modeliai/*
-__pycache__/
-*.pyc
+# Ignoruoti visus .h5 ir .pkl failus visame projekte
+*.h5
+*.pkl
+
+# Išimtys: leidžiame juos išsaugoti šiuose aplankuose
+!issaugoti_modeliai/*.h5
+!issaugoti_modeliai/*.pkl
+!issaugoti_modeliai/
+
+!modeliai/*.h5
+!modeliai/*.pkl
+!modeliai/
+
+static/ikelti_paveiksleliai/*
+!static/ikelti_paveiksleliai/.gitkeep

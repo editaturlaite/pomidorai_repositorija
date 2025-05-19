@@ -20,6 +20,7 @@ def sukurti_paprasta_cnn(ivesties_forma, klasiu_skaicius, learning_rate=0.0001):
         layers.Conv2D(64, (3, 3), activation='relu'),
         layers.BatchNormalization(),
         layers.MaxPooling2D((2, 2)),
+        layers.Dropout(0.4),
 
         layers.Flatten(),
         layers.Dense(128, activation='relu'),
@@ -43,7 +44,7 @@ modelis = sukurti_paprasta_cnn(ivesties_forma, klasiu_skaicius)
 sustabdymas = EarlyStopping(monitor='val_loss', patience=8, restore_best_weights=True)
 
 history = modelis.fit(x_train, y_train, validation_data=(x_val, y_val),
-                      epochs=40, batch_size=32, callbacks=[sustabdymas])
+                      epochs=50, batch_size=32, callbacks=[sustabdymas])
 
 
 nuostolis, tikslumas = modelis.evaluate(x_test, y_test, verbose=1)
@@ -66,3 +67,5 @@ plt.show()
 
 
 print(classification_report(y_pradines, y_prognoze, target_names=klasiu_pavadinimai, digits=4))
+
+modelis.save("issaugoti_modeliai/paprastas_cnn.h5")
