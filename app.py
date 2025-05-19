@@ -9,6 +9,9 @@ from skimage.color import rgb2gray
 from skimage.feature import hog
 import cv2
 from scipy.special import softmax
+from tensorflow.keras.models import load_model
+from tensorflow.keras.preprocessing.image import load_img, img_to_array
+import numpy as np
 
 
 def prognozuoti_su_cnn(nuotraukos_kelias, klases, dydis=(128, 128)):
@@ -81,11 +84,8 @@ def prognozuoti_su_cnn_hsv(nuotraukos_kelias, klases, dydis=(128, 128)):
     return klases[klase], tikslumas
 
 def prognozuoti_su_importuotu_modeliu(nuotraukos_kelias, klases, dydis=(256, 256)):
-    from tensorflow.keras.models import load_model
-    from tensorflow.keras.preprocessing.image import load_img, img_to_array
-    import numpy as np
 
-    modelis = load_model("issaugoti_modeliai/importuotas_modelis.h5")
+    modelis = load_model("issaugoti_modeliai/kagle_modelis.h5")
 
     img = load_img(nuotraukos_kelias, target_size=dydis)
     img_array = img_to_array(img)
