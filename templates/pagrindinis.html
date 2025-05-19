@@ -19,7 +19,7 @@
         <button type="submit">Tikrinti</button>
     </form>
     {% if rezultatas %}
-    <p>{{ rezultatas }}</p>
+    <p>{{ rezultatas|safe }}</p>
     <img src="{{ paveikslelis }}" alt="Įkelta nuotrauka" width="200">
     {% endif %}
 </body>

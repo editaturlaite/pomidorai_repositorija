@@ -161,3 +161,72 @@ def irasyti_testo_paveikslelius_HSV(sesija, testo_kelias):
     print("Irasyti testo HSV paveiksleiai")
 
 
+# -------------------------------------------------------------------------------------------------------
+
+class IkeltaPaveikslelis(Bazine_klase):
+    __tablename__ = 'Ikelti_paveiksleliai'
+    id = Column(Integer, primary_key=True)
+    kelias = Column(String, nullable=False)
+
+
+def irasyti_ikelta_paveiksleli(sesija, paveikslelio_kelias):
+    naujas_paveikslelis = IkeltaPaveikslelis(kelias=paveikslelio_kelias)
+    sesija.add(naujas_paveikslelis)
+    sesija.commit()
+
+# -----------------------------------------------------------------------------------------------------------
+
+
+class PatarimasPagalKlase(Bazine_klase):
+    __tablename__ = 'Patarimai_klasems'
+    id = Column(Integer, primary_key=True)
+    klase = Column(String, unique=True, nullable=False)  
+    patarimas = Column(String, nullable=False)
+
+def sukurti_patarimus(sesija):
+    egzistuoja = sesija.query(PatarimasPagalKlase).first()
+    if egzistuoja:
+        return  
+
+    patarimai = [
+        (
+            "Tomato___Late_blight",
+            "Vėlyvoji maras yra greitai plintanti grybinė infekcija, kuri ypač suaktyvėja drėgnomis sąlygomis. "
+            "Pažeistus lapus ir vaisius rekomenduojama nedelsiant pašalinti ir sunaikinti (nekompostuoti). "
+            "Profilaktikai naudokite vario pagrindu pagamintus fungicidus ir laistykite augalus anksti ryte, kad jie spėtų išdžiūti iki vakaro."
+        ),
+        (
+            "Tomato___Septoria_leaf_spot",
+            "Septoriozė dažniausiai prasideda nuo apatinių lapų. "
+            "Rekomenduojama reguliariai šalinti pažeistus lapus ir užtikrinti gerą oro cirkuliaciją tarp augalų. "
+            "Venkite perteklinės drėgmės ant lapų ir naudokite natūralius arba vario pagrindu pagamintus apsauginius preparatus."
+        ),
+        (
+            "Tomato___healthy",
+            "Jūsų augalas šiuo metu atrodo sveikas. Toliau rūpinkitės juo atsakingai – reguliariai laistykite rytais, "
+            "venkite šlapių lapų vakare, tręškite subalansuotomis trąšomis ir užtikrinkite pakankamą atstumą tarp augalų, kad būtų gera oro cirkuliacija. "
+            "Stebėkite augalą ir reaguokite į bet kokius pokyčius laiku."
+        ),
+        (
+            "Tomato___Bacterial_spot",
+            "Bakterinės dėmės plinta per vandenį, lietų ir tiesioginį kontaktą su kitais augalais ar įrankiais. "
+            "Pažeistus lapus bei vaisius rekomenduojama pašalinti, o įrankius – dezinfekuoti prieš naudojimą. "
+            "Venkite laistymo ant lapų ir naudokite vario pagrindu pagamintus preparatus kaip profilaktinę priemonę."
+        ),
+        (
+            "Tomato___Spider_mites Two-spotted_spider_mite",
+            "Duotaškiai voratinkliniai erkės gali sukelti stiprius lapų pažeidimus. "
+            "Rekomenduojama purkšti augalus vandeniu, kad sumažintumėte erkių populiaciją, arba naudoti natūralius insekticidus, pavyzdžiui, neem aliejų. "
+            "Taip pat būtina reguliariai apžiūrėti lapų apatinę pusę ir palaikyti pakankamą oro drėgmę aplink augalus."
+        ),
+        (
+            "Tomato___Tomato_Yellow_Leaf_Curl_Virus",
+            "Šį virusą dažniausiai platina baltasparniai vabzdžiai. "
+            "Pažeisti augalai turėtų būti pašalinti, o nuo baltasparnių rekomenduojama naudoti lipnias gaudykles ar biologines kontrolės priemones. "
+            "Siekiant apsaugoti sveikus augalus, būtina reguliariai tikrinti augalus ir vengti jų tankaus susodinimo."
+        )
+    ]
+
+    for klase, tekstas in patarimai:
+        sesija.add(PatarimasPagalKlase(klase=klase, patarimas=tekstas))
+    sesija.commit()

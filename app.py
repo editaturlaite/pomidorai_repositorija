@@ -1,25 +1,21 @@
 from flask import Flask, render_template, request
 import os
 from werkzeug.utils import secure_filename
-import numpy as np
-from tensorflow.keras.models import load_model
-from tensorflow.keras.preprocessing.image import load_img, img_to_array
-import joblib
-from skimage.color import rgb2gray
-from skimage.feature import hog
-import cv2
-from scipy.special import softmax
-from tensorflow.keras.models import load_model
-from tensorflow.keras.preprocessing.image import load_img, img_to_array
-import numpy as np
 from prognozavimas_vartotojui import ( prognozuoti_su_cnn,prognozuoti_su_svc,prognozuoti_su_mobilenet,prognozuoti_su_cnn_hsv,prognozuoti_su_atsiustu_modeliu)
+from duomenu_apdorojimas.db_ir_irasymas import sukurti_sesija, irasyti_ikelta_paveiksleli
+from duomenu_apdorojimas.db_ir_irasymas import IkeltaPaveikslelis
+from sqlalchemy import create_engine
+from duomenu_apdorojimas.db_ir_irasymas import Bazine_klase, sukurti_sesija, sukurti_patarimus
+from duomenu_apdorojimas.db_ir_irasymas import PatarimasPagalKlase
+
 
 app = Flask(__name__)
 
-# Nustatome aplanką įkeliamiems failams
-UPLOAD_FOLDER = 'static/ikelti_paveiksleliai'
-os.makedirs(UPLOAD_FOLDER, exist_ok=True)
-app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+
+# # a[lankas] įkeliamiems failams
+VARTOTOJU_PAVEIKSLELIAI = 'static/ikelti_paveiksleliai'
+os.makedirs(VARTOTOJU_PAVEIKSLELIAI, exist_ok=True)
+app.config['UPLOAD_FOLDER'] = VARTOTOJU_PAVEIKSLELIAI
 
 @app.route('/', methods=['GET', 'POST'])
 def index():
@@ -41,56 +37,105 @@ def index():
         failas = request.files['nuotrauka']
 
         if failas:
-            failo_vardas = secure_filename(failas.filename)
-            pilnas_kelias = os.path.join(app.config['UPLOAD_FOLDER'], failo_vardas)
-            failas.save(pilnas_kelias)
-            paveikslelio_kelias = pilnas_kelias 
+            try:
+                failo_vardas = secure_filename(failas.filename)
+                pilnas_kelias = os.path.join(app.config['UPLOAD_FOLDER'], failo_vardas)
+                failas.save(pilnas_kelias)
+                paveikslelio_kelias = pilnas_kelias 
 
-            if pasirinktas_modelis == 'cnn':
+                _, _, sesija = sukurti_sesija()
+                irasyti_ikelta_paveiksleli(sesija, pilnas_kelias)
 
-                klase, tikslumas = prognozuoti_su_cnn(pilnas_kelias, klases)
+                paskutinis_ikeltas = sesija.query(IkeltaPaveikslelis).order_by(IkeltaPaveikslelis.id.desc()).first()
+                paveikslelio_kelias = paskutinis_ikeltas.kelias
 
-                rezultatas = f"CNN modelis: {klase} (tikslumas: {tikslumas*100:.2f}%)"
+                if pasirinktas_modelis == 'cnn':
 
-            elif pasirinktas_modelis == 'svc':
+                    klase, tikslumas = prognozuoti_su_cnn(pilnas_kelias, klases)
 
-                klase, tikslumas = prognozuoti_su_svc(pilnas_kelias, klases)
+                    try:
+                        patarimo_tekstas = sesija.query(PatarimasPagalKlase).filter_by(klase=klase).first().patarimas
+                    except:
+                        patarimo_tekstas = "Profilaktinės rekomendacijos šiai klasei nėra"
 
-                rezultatas = f"SVC modelis: {klase} (modelio įsitikinimas: {tikslumas:.2f})"
+                    rezultatas = (f"CNN modelis: {klase} (tikslumas: {tikslumas*100:.2f}%) <br><br>"
+                    f"Profilaktinė rekomendacija: <br><br>{patarimo_tekstas}")
 
-            elif pasirinktas_modelis == 'mobilenet':
 
-                klase, tikslumas = prognozuoti_su_mobilenet(pilnas_kelias, klases)
+                elif pasirinktas_modelis == 'svc':
 
-                rezultatas = f"MobileNet modelis: {klase} (tikslumas: {tikslumas*100:.2f}%)"
+                    klase, tikslumas = prognozuoti_su_svc(pilnas_kelias, klases)
 
-            elif pasirinktas_modelis == 'cnn_hsv':
+                    try:
+                        patarimo_tekstas = sesija.query(PatarimasPagalKlase).filter_by(klase=klase).first().patarimas
+                    except:
+                        patarimo_tekstas = "Profilaktinės rekomendacijos šiai klasei nėra"
 
-                klase, tikslumas = prognozuoti_su_cnn_hsv(pilnas_kelias, klases)
+                    rezultatas = (f"SVC modelis: {klase} (modelio įsitikinimas: {tikslumas:.2f}) <br><br>"
+                    f"Profilaktinė rekomendacija: <br><br>{patarimo_tekstas}")
 
-                rezultatas = f"CNN HSV modelis: {klase} (tikslumas: {tikslumas*100:.2f}%)"
+                elif pasirinktas_modelis == 'mobilenet':
 
-            elif pasirinktas_modelis == 'parsiustas':
+                    klase, tikslumas = prognozuoti_su_mobilenet(pilnas_kelias, klases)
 
-                klases_importuotas = [
-                    'Tomato___Bacterial_spot',
-                    'Tomato___Early_blight',
-                    'Tomato___Late_blight',
-                    'Tomato___Leaf_Mold',
-                    'Tomato___Septoria_leaf_spot',
-                    'Tomato___Spider_mites Two-spotted_spider_mite',
-                    'Tomato___Target_Spot',
-                    'Tomato___Tomato_Yellow_Leaf_Curl_Virus',
-                    'Tomato___Tomato_mosaic_virus',
-                    'Tomato___healthy']
+                    try:
+                        patarimo_tekstas = sesija.query(PatarimasPagalKlase).filter_by(klase=klase).first().patarimas
+                    except:
+                        patarimo_tekstas = "Profilaktinės rekomendacijos šiai klasei nėra"
 
-                klase, tikslumas = prognozuoti_su_atsiustu_modeliu(pilnas_kelias, klases_importuotas)
-                rezultatas = f"Kito modelis: {klase} (tikslumas: {tikslumas*100:.2f}%)"
+                    rezultatas = (f"MobileNet modelis: {klase} (tikslumas: {tikslumas*100:.2f}%)<br><br>"
+                    f"Profilaktinė rekomendacija: <br><br>{patarimo_tekstas}")
+
+                elif pasirinktas_modelis == 'cnn_hsv':
+
+                    klase, tikslumas = prognozuoti_su_cnn_hsv(pilnas_kelias, klases)
+
+                    try:
+                        patarimo_tekstas = sesija.query(PatarimasPagalKlase).filter_by(klase=klase).first().patarimas
+                    except:
+                        patarimo_tekstas = "Profilaktinės rekomendacijos šiai klasei nėra"
+
+                    rezultatas = (f"CNN HSV modelis: {klase} (tikslumas: {tikslumas*100:.2f}%)<br><br>"
+                    f"Profilaktinė rekomendacija: <br><br>{patarimo_tekstas}")
+
+                elif pasirinktas_modelis == 'parsiustas':
+
+                    klases_importuotas = [
+                        'Tomato___Bacterial_spot',
+                        'Tomato___Early_blight',
+                        'Tomato___Late_blight',
+                        'Tomato___Leaf_Mold',
+                        'Tomato___Septoria_leaf_spot',
+                        'Tomato___Spider_mites Two-spotted_spider_mite',
+                        'Tomato___Target_Spot',
+                        'Tomato___Tomato_Yellow_Leaf_Curl_Virus',
+                        'Tomato___Tomato_mosaic_virus',
+                        'Tomato___healthy']
+
+                    klase, tikslumas = prognozuoti_su_atsiustu_modeliu(pilnas_kelias, klases_importuotas)
+
+                    try:
+                        patarimo_tekstas = sesija.query(PatarimasPagalKlase).filter_by(klase=klase).first().patarimas
+                    except:
+                        patarimo_tekstas = "Profilaktinės rekomendacijos šiai klasei nėra"
+
+                    rezultatas = (f"Kaggle modelis: {klase} (tikslumas: {tikslumas*100:.2f}%)<br><br>"
+                    f"Profilaktinė rekomendacija: <br><br>{patarimo_tekstas}")
+
+            except RuntimeError as klaida:
+                rezultatas = klaida
+            except Exception:
+                rezultatas = "Klaida apdorojant failą"
 
     return render_template('pagrindinis.html', rezultatas=rezultatas, paveikslelis=paveikslelio_kelias)
 
 
-
-
 if __name__ == '__main__':
+
+    # engine = create_engine('sqlite:///duomenu_baze/pomidoru_lapai.db')
+    # Bazine_klase.metadata.create_all(engine)
+
+    # _, _, sesija = sukurti_sesija()
+    # sukurti_patarimus(sesija)
+
     app.run(debug=True)
