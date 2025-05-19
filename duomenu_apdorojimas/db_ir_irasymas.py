@@ -230,3 +230,27 @@ def sukurti_patarimus(sesija):
     for klase, tekstas in patarimai:
         sesija.add(PatarimasPagalKlase(klase=klase, patarimas=tekstas))
     sesija.commit()
+
+
+# --------------------------------------------------------------------------------------------------------------
+
+class TestoRezultatas(Bazine_klase):
+    __tablename__ = "testo_rezultatai"
+
+    id = Column(Integer, primary_key=True)
+    paveikslelis = Column(String)
+    prognoze = Column(String)
+    tikslumas = Column(String)
+    modelis = Column(String)
+    naudotojas = Column(String, default="anonimas")
+
+def irasyti_testo_rezultata(paveikslelis, prognoze,tikslumas, modelis, naudotojas="anonimas"):
+
+    _, _, sesija = sukurti_sesija()
+
+    naujas_rezultatas = TestoRezultatas(paveikslelis=paveikslelis,prognoze=prognoze,tikslumas = tikslumas,
+                                        modelis=modelis,naudotojas=naudotojas)
+
+    sesija.add(naujas_rezultatas)
+    sesija.commit()
+

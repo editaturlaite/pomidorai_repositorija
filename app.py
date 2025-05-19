@@ -5,8 +5,8 @@ from prognozavimas_vartotojui import ( prognozuoti_su_cnn,prognozuoti_su_svc,pro
 from duomenu_apdorojimas.db_ir_irasymas import sukurti_sesija, irasyti_ikelta_paveiksleli
 from duomenu_apdorojimas.db_ir_irasymas import IkeltaPaveikslelis
 from sqlalchemy import create_engine
-from duomenu_apdorojimas.db_ir_irasymas import Bazine_klase, sukurti_sesija, sukurti_patarimus
-from duomenu_apdorojimas.db_ir_irasymas import PatarimasPagalKlase
+from duomenu_apdorojimas.db_ir_irasymas import Bazine_klase, sukurti_sesija, sukurti_patarimus,irasyti_testo_rezultata
+from duomenu_apdorojimas.db_ir_irasymas import PatarimasPagalKlase,TestoRezultatas
 
 
 app = Flask(__name__)
@@ -54,6 +54,8 @@ def index():
 
                     klase, tikslumas = prognozuoti_su_cnn(pilnas_kelias, klases)
 
+                    irasyti_testo_rezultata(paveikslelis=paveikslelio_kelias,prognoze=klase,tikslumas=tikslumas,modelis="cnn")
+
                     try:
                         patarimo_tekstas = sesija.query(PatarimasPagalKlase).filter_by(klase=klase).first().patarimas
                     except:
@@ -67,6 +69,8 @@ def index():
 
                     klase, tikslumas = prognozuoti_su_svc(pilnas_kelias, klases)
 
+                    irasyti_testo_rezultata(paveikslelis=paveikslelio_kelias,prognoze=klase,tikslumas=tikslumas,modelis="svc")
+
                     try:
                         patarimo_tekstas = sesija.query(PatarimasPagalKlase).filter_by(klase=klase).first().patarimas
                     except:
@@ -78,6 +82,7 @@ def index():
                 elif pasirinktas_modelis == 'mobilenet':
 
                     klase, tikslumas = prognozuoti_su_mobilenet(pilnas_kelias, klases)
+                    irasyti_testo_rezultata(paveikslelis=paveikslelio_kelias,prognoze=klase,tikslumas=tikslumas,modelis="mobilenet")
 
                     try:
                         patarimo_tekstas = sesija.query(PatarimasPagalKlase).filter_by(klase=klase).first().patarimas
@@ -90,6 +95,8 @@ def index():
                 elif pasirinktas_modelis == 'cnn_hsv':
 
                     klase, tikslumas = prognozuoti_su_cnn_hsv(pilnas_kelias, klases)
+
+                    irasyti_testo_rezultata(paveikslelis=paveikslelio_kelias,prognoze=klase,tikslumas=tikslumas,modelis="cnn_hsv")
 
                     try:
                         patarimo_tekstas = sesija.query(PatarimasPagalKlase).filter_by(klase=klase).first().patarimas
@@ -114,6 +121,8 @@ def index():
                         'Tomato___healthy']
 
                     klase, tikslumas = prognozuoti_su_atsiustu_modeliu(pilnas_kelias, klases_importuotas)
+
+                    irasyti_testo_rezultata(paveikslelis=paveikslelio_kelias,prognoze=klase,tikslumas=tikslumas,modelis="Kaggle")
 
                     try:
                         patarimo_tekstas = sesija.query(PatarimasPagalKlase).filter_by(klase=klase).first().patarimas
