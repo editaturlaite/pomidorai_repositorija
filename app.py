@@ -8,6 +8,7 @@ import joblib
 from skimage.color import rgb2gray
 from skimage.feature import hog
 import cv2
+from scipy.special import softmax
 
 
 def prognozuoti_su_cnn(nuotraukos_kelias, klases, dydis=(128, 128)):
@@ -44,9 +45,23 @@ def prognozuoti_su_svc(nuotraukos_kelias, klases, dydis=(128, 128)):
 
     spejimas = modelis.predict(pozymiai)[0]
     tikslumai = modelis.decision_function(pozymiai)
-    tikslumas = float(np.max(tikslumai))  # ne softmax, bet įvertinimas
+    procentai = softmax(tikslumai)[0]  # paverčiam į tikimybes
+    tikslumas = float(np.max(procentai))
 
     return klases[spejimas], tikslumas
+
+def prognozuoti_su_mobilenet(nuotraukos_kelias, klases, dydis=(224, 224)):
+    modelis = load_model("issaugoti_modeliai/mobilenet_modelis.h5") 
+
+    img = load_img(nuotraukos_kelias, target_size=dydis)
+    paveikslelis_array = img_to_array(img)
+    paveikslelis_array = np.expand_dims(paveikslelis_array, axis=0)
+
+    prognozes = modelis.predict(paveikslelis_array)
+    klase = np.argmax(prognozes)
+    tikslumas = float(np.max(prognozes))
+
+    return klases[klase], tikslumas
 
 
 app = Flask(__name__)
@@ -92,6 +107,12 @@ def index():
                 klase, tikslumas = prognozuoti_su_svc(pilnas_kelias, klases)
 
                 rezultatas = f"SVC modelis: {klase} (modelio įsitikinimas: {tikslumas:.2f})"
+
+            elif pasirinktas_modelis == 'mobilenet':
+
+                klase, tikslumas = prognozuoti_su_mobilenet(pilnas_kelias, klases)
+
+                rezultatas = f"MobileNet modelis: {klase} (tikslumas: {tikslumas*100:.2f}%)"
 
     return render_template('pagrindinis.html', rezultatas=rezultatas, paveikslelis=paveikslelio_kelias)
 
