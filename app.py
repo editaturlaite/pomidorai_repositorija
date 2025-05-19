@@ -63,6 +63,41 @@ def prognozuoti_su_mobilenet(nuotraukos_kelias, klases, dydis=(224, 224)):
 
     return klases[klase], tikslumas
 
+def prognozuoti_su_cnn_hsv(nuotraukos_kelias, klases, dydis=(128, 128)):
+
+    modelis = load_model("issaugoti_modeliai/cnn_hsv_modelis.h5")
+
+    img_bgr = cv2.imread(nuotraukos_kelias)
+    img_rgb = cv2.cvtColor(img_bgr, cv2.COLOR_BGR2RGB)
+    img_hsv = cv2.cvtColor(img_rgb, cv2.COLOR_RGB2HSV)
+    img_resized = cv2.resize(img_hsv, dydis)
+
+    img_array = np.expand_dims(img_resized, axis=0)
+
+    prognozes = modelis.predict(img_array)
+    klase = np.argmax(prognozes)
+    tikslumas = float(np.max(prognozes))
+
+    return klases[klase], tikslumas
+
+def prognozuoti_su_importuotu_modeliu(nuotraukos_kelias, klases, dydis=(256, 256)):
+    from tensorflow.keras.models import load_model
+    from tensorflow.keras.preprocessing.image import load_img, img_to_array
+    import numpy as np
+
+    modelis = load_model("issaugoti_modeliai/importuotas_modelis.h5")
+
+    img = load_img(nuotraukos_kelias, target_size=dydis)
+    img_array = img_to_array(img)
+    img_array = np.expand_dims(img_array, axis=0)
+    img_array = img_array / 255.0  # normalizavimas, jei modelyje nėra Rescaling sluoksnio
+
+    prognozes = modelis.predict(img_array)
+    klase = np.argmax(prognozes)
+    tikslumas = float(np.max(prognozes))
+
+    return klases[klase], tikslumas
+
 
 app = Flask(__name__)
 
@@ -113,6 +148,29 @@ def index():
                 klase, tikslumas = prognozuoti_su_mobilenet(pilnas_kelias, klases)
 
                 rezultatas = f"MobileNet modelis: {klase} (tikslumas: {tikslumas*100:.2f}%)"
+
+            elif pasirinktas_modelis == 'cnn_hsv':
+
+                klase, tikslumas = prognozuoti_su_cnn_hsv(pilnas_kelias, klases)
+
+                rezultatas = f"CNN HSV modelis: {klase} (tikslumas: {tikslumas*100:.2f}%)"
+
+            elif pasirinktas_modelis == 'parsiustas':
+
+                klases_importuotas = [
+                    'Tomato___Bacterial_spot',
+                    'Tomato___Early_blight',
+                    'Tomato___Late_blight',
+                    'Tomato___Leaf_Mold',
+                    'Tomato___Septoria_leaf_spot',
+                    'Tomato___Spider_mites Two-spotted_spider_mite',
+                    'Tomato___Target_Spot',
+                    'Tomato___Tomato_Yellow_Leaf_Curl_Virus',
+                    'Tomato___Tomato_mosaic_virus',
+                    'Tomato___healthy']
+
+                klase, tikslumas = prognozuoti_su_importuotu_modeliu(pilnas_kelias, klases_importuotas)
+                rezultatas = f"Kito modelis: {klase} (tikslumas: {tikslumas*100:.2f}%)"
 
     return render_template('pagrindinis.html', rezultatas=rezultatas, paveikslelis=paveikslelio_kelias)
 
