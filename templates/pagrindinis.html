@@ -1,26 +1,116 @@
 <head>
-    <meta charset="UTF-8">
-    <title>Pomidorų ligų klasifikacija</title>
+  <meta charset="UTF-8">
+  <title>Pomidorų ligų klasifikacija</title>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      padding: 0;
+      background-color: #55a012;
+      font-family: Arial, sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+
+    .layout {
+      display: flex;
+      gap: 20px;
+      padding: 20px;
+    }
+
+    .sidebar {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
+
+    .sidebar img {
+      display: block;
+      width: 300px;
+      height: 300px;
+      object-fit: cover;
+      border-radius: 15px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.3);
+      margin-top: 100px;
+    }
+
+    .container {
+      background-color: white;
+      padding: 40px;
+      border-radius: 20px;
+      box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+      text-align: center;
+      max-width: 600px;
+      width: 100%;
+    }
+
+    select, input[type="file"], button {
+      padding: 10px;
+      margin-top: 15px;
+      width: 100%;
+      max-width: 300px;
+    }
+
+    button {
+      background-color: #0a990f;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background-color: #03970a;
+    }
+
+    img.result {
+      margin-top: 20px;
+      border: 2px solid #ccc;
+      border-radius: 10px;
+      max-width: 100%;
+    }
+  </style>
 </head>
 <body>
-    <h1>Įkelkite savo nuotrauka</h1>
-    <form method="POST" enctype="multipart/form-data">
+
+  <div class="layout">
+    <div class="sidebar">
+      <img src="/static/kaire1.webp" alt="Kairys 1">
+      <img src="/static/kaire2.webp" alt="Kairys 2">
+    </div>
+
+    <div class="container">
+      <h1>Įkelkite savo nuotrauka</h1>
+      <form method="POST" enctype="multipart/form-data">
         <label for="modelis">Pasirinkite modelį:</label>
         <select name="modelis" id="modelis">
-            <option value="cnn">CNN modelis</option>
-            <option value="svc">SVC modelis</option>
-            <option value="mobilenet">MobileNet modelis</option>
-            <option value="cnn_hsv">CNN HSV modelis</option>
-            <option value="parsiustas">Kagle modelis</option>
+          <option value="cnn">CNN modelis</option>
+          <option value="svc">SVC modelis</option>
+          <option value="mobilenet">MobileNet modelis</option>
+          <option value="cnn_hsv">CNN HSV modelis</option>
+          <option value="parsiustas">Kagle modelis</option>
         </select>
         <br><br>
         <input type="file" name="nuotrauka" accept="image/*" required>
         <br><br>
         <button type="submit">Tikrinti</button>
-    </form>
-    {% if rezultatas %}
-    <p>{{ rezultatas|safe }}</p>
-    <img src="{{ paveikslelis }}" alt="Įkelta nuotrauka" width="200">
-    {% endif %}
+      </form>
+      {% if rezultatas %}
+        <p>{{ rezultatas|safe }}</p>
+        <img src="{{ paveikslelis }}" alt="Įkelta nuotrauka" class="result" width="200">
+      {% endif %}
+    </div>
+
+    <div class="sidebar">
+      <img src="/static/desne1.webp" alt="Desinys 1">
+      <img src="/static/desne2.jpg" alt="Desinys 2">
+    </div>
+  </div>
+
 </body>
 </html>

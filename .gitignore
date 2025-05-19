@@ -192,3 +192,9 @@ pomidoru_lapai.db
 
 static/ikelti_paveiksleliai/*
 !static/ikelti_paveiksleliai/.gitkeep
+
+static/*.png
+static/*.jpg
+static/*.jpeg
+static/*.gif
+static/*.webp
