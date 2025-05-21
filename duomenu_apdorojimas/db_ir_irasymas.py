@@ -1,6 +1,7 @@
-from sqlalchemy import create_engine, Column, Integer, String
+from sqlalchemy import create_engine, Column, Integer, String,LargeBinary
 from sqlalchemy.orm import declarative_base, sessionmaker
 import os
+import numpy as np
 
 Bazine_klase = declarative_base()
 
@@ -100,65 +101,77 @@ def irasyti_testo_paveikslelius(sesija, testo_kelias):
 
 
 # --------------------------------------------------------------------------------------------------------
-# HSV
+# # HSV
 
-class PomidoraiTrenyravimasHSV(Bazine_klase):
-    __tablename__ = 'Pomidoru_lapai_trenyravimo_hsv'
-    id = Column(Integer,primary_key = True)
-    kelias = Column(String, unique=True, nullable=False)  
-    klases_pavadinimas = Column(String, nullable=False)
+# class PomidoraiTrenyravimasHSV(Bazine_klase):
+#     __tablename__ = 'Pomidoru_lapai_trenyravimo_hsv'
+#     id = Column(Integer,primary_key = True)
+#     kelias = Column(String, unique=True, nullable=False)  
+#     klases_pavadinimas = Column(String, nullable=False)
+#     hsv_duomenys = Column(LargeBinary)
 
-class PomidoraiValidacijaHSV(Bazine_klase):
-    __tablename__ = 'Pomidoru_lapai_validacijos_hsv'
-    id = Column(Integer,primary_key = True)
-    kelias = Column(String, unique=True, nullable=False)  
-    klases_pavadinimas = Column(String, nullable=False)
+# class PomidoraiValidacijaHSV(Bazine_klase):
+#     __tablename__ = 'Pomidoru_lapai_validacijos_hsv'
+#     id = Column(Integer,primary_key = True)
+#     kelias = Column(String, unique=True, nullable=False)  
+#     klases_pavadinimas = Column(String, nullable=False)
+#     hsv_duomenys = Column(LargeBinary)
 
-class PomidoraiTestasHSV(Bazine_klase):
-    __tablename__ = 'Pomidoru_lapai_testo_hsv'
-    id = Column(Integer,primary_key = True)
-    kelias = Column(String, unique=True, nullable=False)  
-    klases_pavadinimas = Column(String, nullable=False)
+# class PomidoraiTestasHSV(Bazine_klase):
+#     __tablename__ = 'Pomidoru_lapai_testo_hsv'
+#     id = Column(Integer,primary_key = True)
+#     kelias = Column(String, unique=True, nullable=False)  
+#     klases_pavadinimas = Column(String, nullable=False)
+#     hsv_duomenys = Column(LargeBinary)
 
 
-def irasyti_trenyravimo_paveikslelius_HSV(sesija, trenyravimo_kelias):
-    for klases_pavadinimas in os.listdir(trenyravimo_kelias):
-        klases_kelias = os.path.join(trenyravimo_kelias,klases_pavadinimas)
-        if os.path.isdir(klases_kelias):
-            for paveikslelio_pavadinimas in os.listdir(klases_kelias):
-                paveikslelio_kelias = os.path.join(klases_kelias,paveikslelio_pavadinimas)
-                egzistuoja = sesija.query(PomidoraiTrenyravimasHSV).filter_by(kelias=paveikslelio_kelias).first()
-                if not egzistuoja:
-                    naujas_irasas = PomidoraiTrenyravimasHSV(kelias = paveikslelio_kelias, klases_pavadinimas = klases_pavadinimas)
-                    sesija.add(naujas_irasas)
-    sesija.commit()
-    print("Irasyti treniravimo HSV paveiksleiai")
+# def irasyti_trenyravimo_paveikslelius_HSV(sesija, trenyravimo_kelias):
+#     for klases_pavadinimas in os.listdir(trenyravimo_kelias):
+#         klases_kelias = os.path.join(trenyravimo_kelias,klases_pavadinimas)
+#         if os.path.isdir(klases_kelias):
+#             for paveikslelio_pavadinimas in os.listdir(klases_kelias):
+#                 paveikslelio_kelias = os.path.join(klases_kelias,paveikslelio_pavadinimas)
+#                 egzistuoja = sesija.query(PomidoraiTrenyravimasHSV).filter_by(kelias=paveikslelio_kelias).first()
+#                 if not egzistuoja:
+#                         hsv = np.load(paveikslelio_kelias)
+#                         hsv_bytes = hsv.tobytes()
 
-def irasyti_validacijos_paveikslelius_HSV(sesija, validacijos_kelias):
-    for klases_pavadinimas in os.listdir(validacijos_kelias):
-        klases_kelias = os.path.join(validacijos_kelias,klases_pavadinimas)
-        if os.path.isdir(klases_kelias):
-            for paveikslelio_pavadinimas in os.listdir(klases_kelias):
-                paveikslelio_kelias = os.path.join(klases_kelias,paveikslelio_pavadinimas)
-                egzistuoja = sesija.query(PomidoraiValidacijaHSV).filter_by(kelias=paveikslelio_kelias).first()
-                if not egzistuoja:
-                    naujas_irasas = PomidoraiValidacijaHSV(kelias = paveikslelio_kelias, klases_pavadinimas = klases_pavadinimas)
-                    sesija.add(naujas_irasas)
-    sesija.commit()
-    print("Irasyti validacijos HSV paveiksleiai")
+#                         naujas_irasas = PomidoraiTrenyravimasHSV(kelias=paveikslelio_kelias,klases_pavadinimas=klases_pavadinimas,hsv_duomenys=hsv_bytes)
+#                         sesija.add(naujas_irasas)
+#     sesija.commit()
+#     print("Irasyti treniravimo HSV paveiksleiai")
 
-def irasyti_testo_paveikslelius_HSV(sesija, testo_kelias):
-    for klases_pavadinimas in os.listdir(testo_kelias):
-        klases_kelias = os.path.join(testo_kelias,klases_pavadinimas)
-        if os.path.isdir(klases_kelias):
-            for paveikslelio_pavadinimas in os.listdir(klases_kelias):
-                paveikslelio_kelias = os.path.join(klases_kelias,paveikslelio_pavadinimas)
-                egzistuoja = sesija.query(PomidoraiTestasHSV).filter_by(kelias=paveikslelio_kelias).first()
-                if not egzistuoja:
-                    naujas_irasas = PomidoraiTestasHSV(kelias = paveikslelio_kelias, klases_pavadinimas = klases_pavadinimas)
-                    sesija.add(naujas_irasas)
-    sesija.commit()
-    print("Irasyti testo HSV paveiksleiai")
+# def irasyti_validacijos_paveikslelius_HSV(sesija, validacijos_kelias):
+#     for klases_pavadinimas in os.listdir(validacijos_kelias):
+#         klases_kelias = os.path.join(validacijos_kelias,klases_pavadinimas)
+#         if os.path.isdir(klases_kelias):
+#             for paveikslelio_pavadinimas in os.listdir(klases_kelias):
+#                 paveikslelio_kelias = os.path.join(klases_kelias,paveikslelio_pavadinimas)
+#                 egzistuoja = sesija.query(PomidoraiValidacijaHSV).filter_by(kelias=paveikslelio_kelias).first()
+#                 if not egzistuoja:
+#                         hsv = np.load(paveikslelio_kelias)
+#                         hsv_bytes = hsv.tobytes()
+
+#                         naujas_irasas = PomidoraiValidacijaHSV(kelias=paveikslelio_kelias,klases_pavadinimas=klases_pavadinimas,hsv_duomenys=hsv_bytes)
+#                         sesija.add(naujas_irasas)
+#     sesija.commit()
+#     print("Irasyti validacijos HSV paveiksleiai")
+
+# def irasyti_testo_paveikslelius_HSV(sesija, testo_kelias):
+#     for klases_pavadinimas in os.listdir(testo_kelias):
+#         klases_kelias = os.path.join(testo_kelias,klases_pavadinimas)
+#         if os.path.isdir(klases_kelias):
+#             for paveikslelio_pavadinimas in os.listdir(klases_kelias):
+#                 paveikslelio_kelias = os.path.join(klases_kelias,paveikslelio_pavadinimas)
+#                 egzistuoja = sesija.query(PomidoraiTestasHSV).filter_by(kelias=paveikslelio_kelias).first()
+#                 if not egzistuoja:
+#                         hsv = np.load(paveikslelio_kelias)
+#                         hsv_bytes = hsv.tobytes()
+
+#                         naujas_irasas = PomidoraiTestasHSV(kelias=paveikslelio_kelias,klases_pavadinimas=klases_pavadinimas,hsv_duomenys=hsv_bytes)
+#                         sesija.add(naujas_irasas)
+#     sesija.commit()
+#     print("Irasyti testo HSV paveiksleiai")
 
 
 # -------------------------------------------------------------------------------------------------------
@@ -253,4 +266,17 @@ def irasyti_testo_rezultata(paveikslelis, prognoze,tikslumas, modelis, naudotoja
 
     sesija.add(naujas_rezultatas)
     sesija.commit()
+
+
+
+
+
+# rysys_su_baze = create_engine('sqlite:///duomenu_baze/pomidoru_lapai.db')
+
+# PomidoraiTrenyravimasHSV.__table__.drop(rysys_su_baze)
+# PomidoraiValidacijaHSV.__table__.drop(rysys_su_baze)
+# PomidoraiTestasHSV.__table__.drop(rysys_su_baze)
+# print("Lentelė ištrinta.")
+
+
 

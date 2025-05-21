@@ -44,7 +44,7 @@ def prognozuoti_su_svc(nuotraukos_kelias, klases, dydis=(128, 128)):
             orientations=9,
             feature_vector=True).reshape(1, -1)
 
-        spejimas = modelis.predict(pozymiai)[0]
+        spejimas = modelis.predict(pozymiai)[0] #del grozio vietoj masyvo 
         tikslumai = modelis.decision_function(pozymiai)
         procentai = softmax(tikslumai)[0]  # paverčiam į tikimybes
         tikslumas = float(np.max(procentai))
@@ -74,13 +74,15 @@ def prognozuoti_su_mobilenet(nuotraukos_kelias, klases, dydis=(224, 224)):
 
 def prognozuoti_su_cnn_hsv(nuotraukos_kelias, klases, dydis=(128, 128)):
     try:
-        modelis = load_model("modeliai_vartotojui/issaugoti_modeliai/cnn_hsv_modelis.h5")
+        modelis = load_model("modeliai_vartotojui/issaugoti_modeliai/hsv_cnn_modelis_taisyklingai.h5")
 
         atidarytas_paveikslelis = cv2.imread(nuotraukos_kelias)
         paveikslelis_rgb = cv2.cvtColor(atidarytas_paveikslelis, cv2.COLOR_BGR2RGB)
         sumazintas_paveikslelis = cv2.resize(paveikslelis_rgb, dydis)
 
-        paveikslelis_array = np.expand_dims(sumazintas_paveikslelis, axis=0)
+        paveikslelis_hsv = cv2.cvtColor(sumazintas_paveikslelis, cv2.COLOR_RGB2HSV)
+
+        paveikslelis_array = np.expand_dims(paveikslelis_hsv, axis=0).astype("float32") / 255.0
 
         prognozes_klasems = modelis.predict(paveikslelis_array)
         klase = np.argmax(prognozes_klasems)

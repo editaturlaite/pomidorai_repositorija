@@ -1,17 +1,12 @@
 import sys
 import os
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..')))
 import numpy as np
-import pandas as pd
 import matplotlib.pyplot as plt
-import tensorflow as tf
 from tensorflow import keras
 from tensorflow.keras import layers
 from tensorflow.keras.callbacks import EarlyStopping
-from sklearn.preprocessing import LabelEncoder
-from tensorflow.keras.utils import load_img, img_to_array, to_categorical
-from duomenu_apdorojimas.db_ir_irasymas import sukurti_sesija
-from duomenu_apdorojimas.paveiksleliu_nuskaitymas import issitraukti_paveikslelius, uzkoduoti_klases_lable
+from tensorflow.keras.utils import  to_categorical
 from duomenu_apdorojimas.paruosti_duomenys_hsv import x_train, y_train, x_val, y_val, x_test, y_test
 from sklearn.metrics import classification_report, confusion_matrix, ConfusionMatrixDisplay
 
@@ -76,4 +71,4 @@ plt.show()
 
 print(classification_report(y_tikros, y_prognozes))
 
-# modelis.save("issaugoti_modeliai/hsv_cnn_modelis.h5")
+modelis.save("modeliai_vartotojui/issaugoti_modeliai/hsv_cnn_modelis_taisyklingai.h5")
