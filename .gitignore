@@ -200,3 +200,21 @@ static/*.gif
 static/*.webp
 
 static/ikelta_mokymui/*
+
+# Python
+__pycache__/
+*.pyc
+
+# Virtual env
+venv/
+
+# Flask instance folder
+instance/
+
+
+# Jupyter test notebooks (jei nenori į Git)
+testavimas/
+
+# Mac/Linux/Windows OS failai
+.DS_Store
+Thumbs.db

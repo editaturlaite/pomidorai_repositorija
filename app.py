@@ -1,7 +1,7 @@
 from flask import Flask, render_template, request,redirect, url_for, flash
 import os
 from werkzeug.utils import secure_filename
-from prognozavimas_vartotojui import ( prognozuoti_su_cnn,prognozuoti_su_svc,prognozuoti_su_mobilenet,prognozuoti_su_cnn_hsv,prognozuoti_su_atsiustu_modeliu)
+from modeliai_vartotojui.prognozavimas_vartotojui import ( prognozuoti_su_cnn,prognozuoti_su_svc,prognozuoti_su_mobilenet,prognozuoti_su_cnn_hsv,prognozuoti_su_atsiustu_modeliu)
 from duomenu_apdorojimas.db_ir_irasymas import sukurti_sesija, irasyti_ikelta_paveiksleli
 from duomenu_apdorojimas.db_ir_irasymas import IkeltaPaveikslelis
 from sqlalchemy import create_engine
@@ -61,7 +61,7 @@ def index():
                     except:
                         patarimo_tekstas = "Profilaktinės rekomendacijos šiai klasei nėra"
 
-                    rezultatas = (f"CNN modelis: {klase} (tikslumas: {tikslumas*100:.2f}%) <br><br>"
+                    rezultatas = (f"CNN modelis: {klase} (tikslumas/pasitikėjimas šiam spėjimui: {tikslumas*100:.2f}%) <br><br>"
                     f"Profilaktinė rekomendacija: <br><br>{patarimo_tekstas}")
 
 
@@ -76,7 +76,7 @@ def index():
                     except:
                         patarimo_tekstas = "Profilaktinės rekomendacijos šiai klasei nėra"
 
-                    rezultatas = (f"SVC modelis: {klase} (modelio įsitikinimas: {tikslumas:.2f}) <br><br>"
+                    rezultatas = (f"SVC modelis: {klase} (modelio įsitikinimas šiam spėjimui: {tikslumas:.2f}) <br><br>"
                     f"Profilaktinė rekomendacija: <br><br>{patarimo_tekstas}")
 
                 elif pasirinktas_modelis == 'mobilenet':
@@ -89,7 +89,7 @@ def index():
                     except:
                         patarimo_tekstas = "Profilaktinės rekomendacijos šiai klasei nėra"
 
-                    rezultatas = (f"MobileNet modelis: {klase} (tikslumas: {tikslumas*100:.2f}%)<br><br>"
+                    rezultatas = (f"MobileNet modelis: {klase} (tikslumas/pasitikėjimas šiam spėjimui: {tikslumas*100:.2f}%)<br><br>"
                     f"Profilaktinė rekomendacija: <br><br>{patarimo_tekstas}")
 
                 elif pasirinktas_modelis == 'cnn_hsv':
@@ -103,7 +103,7 @@ def index():
                     except:
                         patarimo_tekstas = "Profilaktinės rekomendacijos šiai klasei nėra"
 
-                    rezultatas = (f"CNN HSV modelis: {klase} (tikslumas: {tikslumas*100:.2f}%)<br><br>"
+                    rezultatas = (f"CNN HSV modelis: {klase} (tikslumas/pasitikėjimas šiam spėjimui: {tikslumas*100:.2f}%)<br><br>"
                     f"Profilaktinė rekomendacija: <br><br>{patarimo_tekstas}")
 
                 elif pasirinktas_modelis == 'parsiustas':
@@ -129,7 +129,7 @@ def index():
                     except:
                         patarimo_tekstas = "Profilaktinės rekomendacijos šiai klasei nėra"
 
-                    rezultatas = (f"Kaggle modelis: {klase} (tikslumas: {tikslumas*100:.2f}%)<br><br>"
+                    rezultatas = (f"Kaggle modelis: {klase} (tikslumas/pasitikėjimas šiam spėjimui: {tikslumas*100:.2f}%)<br><br>"
                     f"Profilaktinė rekomendacija: <br><br>{patarimo_tekstas}")
 
             except RuntimeError as klaida:
