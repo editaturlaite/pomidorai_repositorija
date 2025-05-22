@@ -213,7 +213,7 @@ instance/
 
 
 # Jupyter test notebooks (jei nenori į Git)
-testavimas/
+procesiniai_duomenys/
 
 # Mac/Linux/Windows OS failai
 .DS_Store
